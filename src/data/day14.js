@@ -47,7 +47,7 @@ useEffect(() => {
       id: 'mock-round2',
       title: 'Mock Round 2 — System Design (45 min)',
       difficulty: 'hard',
-      explanation: `Common system design questions for your level (3 years, full-stack):
+      explanation: `Common system design questions for your level (4 years, full-stack):
 
 • Design a URL shortener
 • Design a notification system
@@ -162,7 +162,7 @@ Interviewers are evaluating: communication clarity, self-awareness, and whether 
       code: `// Practice answers — time yourself, aim for 90-120 seconds each
 
 // "Describe yourself in 3 sentences"
-"I'm a full-stack developer with 3 years of experience building
+"I'm a full-stack developer with 4 years of experience building
 production systems — mostly Node.js, React, Vue, and PostgreSQL.
 I've owned projects end-to-end from schema design to AWS deployment.
 I care most about writing code that solves real problems cleanly."
@@ -230,7 +230,7 @@ JD Requirement → My Experience
     },
   ],
   interviewQA: [
-    { q: 'Q1. What is your introduction / elevator pitch?', a: `Full-stack developer, 3 years. Built ARC Parcel from scratch — 15-hub logistics platform, 900K shipment records, AWS deployment. Contributed to TalentFind's backend with FastAPI and Vue 3. Comfortable end-to-end — schema design, APIs, frontend, DevOps. Currently targeting senior developer roles in product companies where I can work on harder technical problems with a strong team.` },
+    { q: 'Q1. Tell me about yourself. (The pitch that gets you moved forward)', a: `I'm a full-stack developer with 4 years of experience, and what sets me apart is that I've owned production systems end to end — not just features, but entire platforms from blank schema to AWS deployment. The project I'm most proud of is ARC Parcel — a logistics platform I built for a company managing 15 regional hubs and over 900,000 shipment records. I designed the DB schema, built the Node.js API, the React frontend, Redis caching layer, and set up the CI/CD pipeline. Real problems — a commission report taking 12 seconds, I brought it to under 2 with index optimization and MySQL views. After that, TalentFind — a B2B recruitment SaaS — where I designed the FastAPI backend and Vue 3 frontend. Multi-tenant architecture, dual-session prevention, document management with S3 presigned URLs. I'm also someone who uses AI seriously as a tool — Claude Code and Claude Agent daily — which means I move faster on implementation without dropping quality. I'm looking for a senior role where the engineering bar is high and the problems are genuinely complex. Based on what I've seen of your product and team, that's exactly what this is.` },
     { q: 'Q2. Walk me through your resume.', a: `Start with current/most recent. ARC Parcel — my most complete ownership, built the whole platform. Then TalentFind — different stack (FastAPI, Vue), bigger team, my specific contributions. ATOFON — B2B e-commerce, the ordering and inventory system. Each project I try to lead with what I built and the impact, not just the tech. End with skills and education briefly.` },
     { q: 'Q3. How do you stay updated with new technologies?', a: `A mix of things. I follow a few engineers on Twitter/X who share practical takes — not hype. Changelog and JS Weekly newsletters for what's actually shipping. When something comes up in a project, I learn it deeply rather than surface level. I also build small throwaway projects when I want to learn something properly — reading docs is fine, actually building with it is how it sticks.` },
     { q: 'Q4. What is the most complex feature you have built?', a: `The vehicle indent to commission payment flow in ARC Parcel. It involved: creating the trip authorization, assigning the vehicle and driver, tracking all shipments under that indent, applying commission rules based on hub/zone/vehicle type, and generating payment records. All of this had to be transactional — partial writes would corrupt financial data. I also built the MySQL view that aggregated it for reporting and the PDF generation pipeline.` },
@@ -240,5 +240,7 @@ JD Requirement → My Experience
     { q: 'Q8. How do you handle a requirement that keeps changing?', a: `I try to understand why it's changing first. Sometimes requirements change because the user saw the prototype and realized they wanted something different — that's healthy. Sometimes it's indecision higher up — that needs different handling. For frequent changes, I build more loosely coupled — config-driven behavior, separate constants from logic. And I flag when changes have ripple effects so there are no surprises on timeline.` },
     { q: 'Q9. What technologies are you learning right now?', a: `TypeScript more deeply — I've used it in small amounts but I want to be fully proficient, especially for complex generic types. Docker and container orchestration — I've used Docker but want to get into Kubernetes at a basic level. And I've been looking at Redis streams as a message queue alternative to understand the tradeoffs versus BullMQ.` },
     { q: 'Q10. Do you have any questions for us?', a: `Yes — what does the engineering team's technical decision process look like? Is it top-down from the architect or does the team propose and debate solutions? Also, what's the biggest technical challenge the team is actively working on? And for this role specifically — what would success look like in the first 90 days?` },
+    { q: 'Q11. Do you use AI tools in your work? How?', a: `Yes — Claude Code and Claude Agent are part of my daily workflow. Claude Code runs in my terminal while I'm coding — I use it for generating boilerplate, scaffolding new features, and reviewing logic before it goes to PR. Claude Agent handles multi-step tasks across multiple files — like setting up a whole feature structure or refactoring a pattern across a service. The key thing I'm clear on: I review and own everything that goes in. The architecture decisions, the schema design, the edge cases — those are mine. AI compresses the time on mechanical work so I can spend more on the parts that actually need engineering judgment. I have strong hands-on experience with it and it genuinely makes me faster.` },
+    { q: 'Q12. How do you make sure AI-generated code is production quality?', a: `Same process as any code — I read it, I understand it, I test it. I don't ship code I can't explain. If Claude generates something and I can't tell you why every line is there, it doesn't go in. I also tend to use AI for the first draft, then refactor to match our team's conventions and add proper error handling. The way I think about it: Claude is a very fast junior developer that never gets tired. The senior review and judgment layer is still entirely mine.` },
   ]
 }

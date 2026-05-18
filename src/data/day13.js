@@ -41,7 +41,7 @@ Benefits: 1,00,000
 // Note: hike percentage matters less than market rate
 // If market pays 18 and you're at 12, 50% hike is justified`,
       interviewQ: 'How did you arrive at your expected salary?',
-      interviewA: `I researched Glassdoor, LinkedIn Salary, and AmbitionBox for full-stack developers with 3 years of experience in Bangalore with a similar stack — Node.js, React, Vue, PostgreSQL. The range I saw was 16-22 LPA for product companies. My current skills match the 18-20 LPA band — I've built production systems handling 900K records, deployed on AWS, worked across the full stack. So I'm expecting 18-20 LPA. What's the budget for this role?`,
+      interviewA: `I researched Glassdoor, LinkedIn Salary, and AmbitionBox for full-stack developers with 4 years of experience in Bangalore with a similar stack — Node.js, React, Vue, PostgreSQL. The range I saw was 16-22 LPA for product companies. My current skills match the 18-20 LPA band — I've built production systems handling 900K records, deployed on AWS, worked across the full stack. So I'm expecting 18-20 LPA. What's the budget for this role?`,
     },
     {
       id: 'negotiation-tactics',
