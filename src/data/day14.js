@@ -4,6 +4,279 @@ export const day14 = {
   subtitle: 'Full interview rounds — technical, system design, behavioural, HR',
   concepts: [
     {
+      id: 'startup-coding',
+      title: 'Startup Coding Round — What They Actually Ask',
+      difficulty: 'hard',
+      explanation: `Startups don't do LeetCode Hard. They test if you can write real working code fast.
+
+What startups actually ask:
+• Write a debounce / throttle function
+• Implement a simple LRU cache
+• Write an Express middleware (auth, rate limit, logger)
+• Write a SQL query (joins, aggregation, window functions)
+• Fix a bug in this code snippet
+• Implement pagination (cursor-based)
+• Write a class with specific behavior
+• Flatten nested objects / arrays
+• Build a simple pub/sub or event emitter
+
+Format: usually 45-60 min, shared editor (CodeSandbox, HackerRank, or Google Docs), may or may not run the code.
+
+Key advice: talk while you code. Startups hire for culture fit too — they want to see how you think, not just the final answer.`,
+      code: `// ── PROBLEM 1: Implement debounce (asked very frequently) ──
+function debounce(fn, delay) {
+  let timer
+  return function (...args) {
+    clearTimeout(timer)
+    timer = setTimeout(() => fn.apply(this, args), delay)
+  }
+}
+// Usage: const search = debounce(callAPI, 300)
+
+
+// ── PROBLEM 2: Implement throttle ──
+function throttle(fn, limit) {
+  let lastCall = 0
+  return function (...args) {
+    const now = Date.now()
+    if (now - lastCall >= limit) {
+      lastCall = now
+      return fn.apply(this, args)
+    }
+  }
+}
+
+
+// ── PROBLEM 3: LRU Cache (get O(1), put O(1)) ──
+class LRUCache {
+  constructor(capacity) {
+    this.capacity = capacity
+    this.cache = new Map()  // Map preserves insertion order
+  }
+  get(key) {
+    if (!this.cache.has(key)) return -1
+    const val = this.cache.get(key)
+    this.cache.delete(key)      // remove
+    this.cache.set(key, val)    // re-insert at end = most recent
+    return val
+  }
+  put(key, value) {
+    if (this.cache.has(key)) this.cache.delete(key)
+    else if (this.cache.size >= this.capacity) {
+      this.cache.delete(this.cache.keys().next().value)  // delete oldest
+    }
+    this.cache.set(key, value)
+  }
+}
+
+
+// ── PROBLEM 4: Flatten nested object ──
+function flattenObject(obj, prefix = '') {
+  return Object.keys(obj).reduce((acc, key) => {
+    const fullKey = prefix ? \`\${prefix}.\${key}\` : key
+    if (typeof obj[key] === 'object' && obj[key] !== null && !Array.isArray(obj[key])) {
+      Object.assign(acc, flattenObject(obj[key], fullKey))
+    } else {
+      acc[fullKey] = obj[key]
+    }
+    return acc
+  }, {})
+}
+// flattenObject({ a: { b: { c: 1 } }, d: 2 })
+// → { 'a.b.c': 1, d: 2 }
+
+
+// ── PROBLEM 5: Implement Promise.all from scratch ──
+function myPromiseAll(promises) {
+  return new Promise((resolve, reject) => {
+    const results = []
+    let completed = 0
+    if (promises.length === 0) return resolve([])
+    promises.forEach((p, i) => {
+      Promise.resolve(p)
+        .then(val => {
+          results[i] = val
+          completed++
+          if (completed === promises.length) resolve(results)
+        })
+        .catch(reject)
+    })
+  })
+}
+
+
+// ── PROBLEM 6: Deep equal check ──
+function deepEqual(a, b) {
+  if (a === b) return true
+  if (typeof a !== 'object' || typeof b !== 'object') return false
+  if (a === null || b === null) return false
+  const keysA = Object.keys(a), keysB = Object.keys(b)
+  if (keysA.length !== keysB.length) return false
+  return keysA.every(key => deepEqual(a[key], b[key]))
+}
+
+
+// ── PROBLEM 7: Group array of objects by key ──
+function groupBy(arr, key) {
+  return arr.reduce((acc, item) => {
+    const group = item[key]
+    if (!acc[group]) acc[group] = []
+    acc[group].push(item)
+    return acc
+  }, {})
+}
+// groupBy(orders, 'status') → { paid: [...], pending: [...] }`,
+      interviewQ: 'Implement a function that deep clones an object without using JSON.parse/JSON.stringify.',
+      interviewA: `Use recursion. Base case: if the value is not an object or is null, return it directly. For arrays, map each element through the clone function. For objects, create a new object and recursively clone each property. This handles nested structures but won't handle special objects like Date, Map, Set, or circular references — for production use structuredClone() which handles all of those. In an interview, mentioning these edge cases after writing the basic version shows senior-level thinking.`,
+    },
+    {
+      id: 'startup-backend-coding',
+      title: 'Startup Backend Coding — Node.js + SQL Problems',
+      difficulty: 'hard',
+      explanation: `Backend-focused startups will give you real problems — write an API endpoint, write a SQL query, fix a bug in existing code.
+
+Common backend coding rounds:
+• Write a rate limiter middleware
+• Write a pagination helper
+• Write a SQL query with joins and aggregation
+• Implement a simple event emitter
+• Write an auth middleware
+• Find and fix the bug in this async code
+• Write a retry function with exponential backoff
+
+These test if you can actually build — not just talk about it.`,
+      code: `// ── PROBLEM 1: Rate limiter middleware (Redis-based) ──
+const rateLimit = (limit, windowSec) => async (req, res, next) => {
+  const key = \`ratelimit:\${req.ip}\`
+  const count = await redis.incr(key)
+  if (count === 1) await redis.expire(key, windowSec)
+  if (count > limit) {
+    return res.status(429).json({
+      error: 'Too many requests',
+      retryAfter: windowSec
+    })
+  }
+  res.setHeader('X-RateLimit-Remaining', limit - count)
+  next()
+}
+// Usage: app.post('/login', rateLimit(5, 60), loginHandler)
+
+
+// ── PROBLEM 2: Cursor-based pagination ──
+async function getPaginatedCandidates(orgId, cursor, limit = 20) {
+  const where = { org_id: orgId }
+  if (cursor) where.id = { [Op.gt]: cursor }  // after last seen ID
+
+  const items = await Candidate.findAll({
+    where,
+    order: [['id', 'ASC']],
+    limit: limit + 1  // fetch one extra to check if more exist
+  })
+
+  const hasMore = items.length > limit
+  if (hasMore) items.pop()  // remove the extra
+
+  return {
+    data: items,
+    nextCursor: hasMore ? items[items.length - 1].id : null,
+    hasMore
+  }
+}
+
+
+// ── PROBLEM 3: Retry with exponential backoff ──
+async function withRetry(fn, maxRetries = 3, baseDelay = 1000) {
+  let lastError
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      return await fn()
+    } catch (err) {
+      lastError = err
+      if (attempt < maxRetries - 1) {
+        const delay = baseDelay * Math.pow(2, attempt)  // 1s, 2s, 4s
+        console.log(\`Attempt \${attempt + 1} failed. Retrying in \${delay}ms...\`)
+        await new Promise(r => setTimeout(r, delay))
+      }
+    }
+  }
+  throw lastError
+}
+// Usage: const data = await withRetry(() => fetchFromExternalAPI())
+
+
+// ── PROBLEM 4: Simple EventEmitter ──
+class EventEmitter {
+  constructor() { this.events = {} }
+
+  on(event, listener) {
+    if (!this.events[event]) this.events[event] = []
+    this.events[event].push(listener)
+    return this
+  }
+  off(event, listener) {
+    if (!this.events[event]) return
+    this.events[event] = this.events[event].filter(l => l !== listener)
+    return this
+  }
+  emit(event, ...args) {
+    if (!this.events[event]) return
+    this.events[event].forEach(listener => listener(...args))
+    return this
+  }
+  once(event, listener) {
+    const wrapper = (...args) => {
+      listener(...args)
+      this.off(event, wrapper)
+    }
+    return this.on(event, wrapper)
+  }
+}
+
+
+// ── PROBLEM 5: SQL — Top 3 candidates per org by application count ──
+/*
+SELECT org_id, candidate_id, name, application_count
+FROM (
+  SELECT
+    c.org_id,
+    c.id as candidate_id,
+    c.name,
+    COUNT(ja.id) as application_count,
+    ROW_NUMBER() OVER (
+      PARTITION BY c.org_id
+      ORDER BY COUNT(ja.id) DESC
+    ) as rank
+  FROM candidates c
+  LEFT JOIN job_applications ja ON ja.candidate_id = c.id
+  WHERE c.status = 'active'
+  GROUP BY c.org_id, c.id, c.name
+) ranked
+WHERE rank <= 3;
+*/
+
+// ── PROBLEM 6: Find the bug ──
+// What's wrong with this code?
+async function getUserOrders(userId) {
+  const user = await User.findById(userId)
+  const orders = await Order.find({ userId })
+  // Bug: if User.findById throws, Order.find still runs
+  // Bug: no error handling, caller gets unhandled rejection
+  // Bug: two sequential awaits — should be Promise.all if independent
+  return { user, orders }
+}
+// Fixed:
+async function getUserOrdersFixed(userId) {
+  const [user, orders] = await Promise.all([
+    User.findById(userId),
+    Order.find({ userId })
+  ])
+  if (!user) throw new NotFoundError('User')
+  return { user, orders }
+}`,
+      interviewQ: 'Given an array of numbers, find the two numbers that add up to a target — explain your approach before coding.',
+      interviewA: `First approach that comes to mind is brute force — two nested loops, check every pair. O(n²) time. Better approach: hash map. Loop once, for each number check if the complement (target minus current) is already in the map. If yes, found the pair. If no, store the current number. O(n) time, O(n) space. I'd ask: can there be duplicates? Can the same element be used twice? Are all numbers positive? These constraints might open up other approaches. Then I'd code the hash map solution since it's optimal and straightforward to implement correctly.`,
+    },
+    {
       id: 'mock-round1',
       title: 'Mock Round 1 — JavaScript + React (30 min)',
       difficulty: 'hard',
