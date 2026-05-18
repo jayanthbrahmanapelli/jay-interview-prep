@@ -1,7 +1,7 @@
 import { Link, useParams } from 'react-router-dom'
 import { curriculum } from '../data/curriculum'
 
-export default function Sidebar() {
+export default function Sidebar({ onClose }) {
   const { id } = useParams()
   const currentDay = parseInt(id)
   const completed = JSON.parse(localStorage.getItem('completedDays') || '[]')
@@ -12,11 +12,9 @@ export default function Sidebar() {
       minWidth: '260px',
       background: '#050a14',
       borderRight: '1px solid #1e2d3d',
-      height: 'calc(100vh - 60px)',
+      height: '100%',
       overflowY: 'auto',
       padding: '16px 0',
-      position: 'sticky',
-      top: '60px'
     }}>
       <div style={{ padding: '0 16px 12px', borderBottom: '1px solid #1e2d3d', marginBottom: '8px' }}>
         <div style={{ color: '#64748b', fontSize: '11px', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
@@ -45,6 +43,7 @@ export default function Sidebar() {
             key={day.id}
             to={`/day/${day.id}`}
             style={{ textDecoration: 'none', display: 'block' }}
+            onClick={onClose}
           >
             <div style={{
               display: 'flex',

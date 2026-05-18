@@ -14,6 +14,7 @@ export default function DayPage() {
   const day = allDays[dayId]
   const meta = curriculum.find(d => d.id === dayId)
   const [activeTab, setActiveTab] = useState('concepts')
+  const [sidebarOpen, setSidebarOpen] = useState(false)
   const [completed, setCompleted] = useState(
     JSON.parse(localStorage.getItem('completedDays') || '[]')
   )
@@ -21,6 +22,7 @@ export default function DayPage() {
   useEffect(() => {
     window.scrollTo(0, 0)
     setActiveTab('concepts')
+    setSidebarOpen(false)
   }, [id])
 
   if (!day) {
@@ -53,17 +55,68 @@ export default function DayPage() {
   return (
     <div style={{ minHeight: '100vh', background: '#0A0F1F' }}>
       <Navbar />
+
+      {/* Mobile overlay backdrop */}
+      {sidebarOpen && (
+        <div
+          onClick={() => setSidebarOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.6)',
+            zIndex: 200,
+            top: '60px'
+          }}
+        />
+      )}
+
+      {/* Mobile sidebar drawer */}
+      <div style={{
+        position: 'fixed',
+        top: '60px',
+        left: sidebarOpen ? 0 : '-280px',
+        width: '260px',
+        height: 'calc(100vh - 60px)',
+        zIndex: 300,
+        transition: 'left 0.25s ease',
+        display: 'block',
+        overflowY: 'auto',
+      }}>
+        <Sidebar onClose={() => setSidebarOpen(false)} />
+      </div>
+
       <div style={{ display: 'flex' }}>
-        {/* Sidebar — hidden on small screens via inline check */}
-        <div style={{ display: 'flex' }}>
-          <Sidebar />
+        {/* Desktop sidebar — visible on wide screens */}
+        <div style={{ display: 'none' }} className="desktop-sidebar">
+          <Sidebar onClose={() => {}} />
         </div>
 
         {/* Main content */}
-        <main style={{ flex: 1, padding: '32px', minWidth: 0, maxWidth: '900px' }}>
+        <main style={{ flex: 1, padding: '20px', minWidth: 0, maxWidth: '900px' }}>
           {/* Day header */}
           <div style={{ marginBottom: '32px' }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '8px' }}>
+              {/* Hamburger button */}
+              <button
+                onClick={() => setSidebarOpen(true)}
+                style={{
+                  background: '#0a1628',
+                  border: '1px solid #1e2d3d',
+                  color: '#94a3b8',
+                  width: '38px',
+                  height: '38px',
+                  borderRadius: '8px',
+                  cursor: 'pointer',
+                  fontSize: '18px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  flexShrink: 0,
+                }}
+                aria-label="Open menu"
+              >
+                ☰
+              </button>
               <span style={{ fontSize: '32px' }}>{meta?.emoji}</span>
               <div>
                 <div style={{ color: '#64748b', fontSize: '13px', marginBottom: '2px' }}>Day {dayId}</div>
